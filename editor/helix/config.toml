@@ -1,0 +1,7 @@
+# Isolated Helix configuration for testing guile-lsp (see scripts/hx.sh).
+[editor]
+idle-timeout = 100
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = false

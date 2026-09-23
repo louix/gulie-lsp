@@ -1,0 +1,28 @@
+# Isolated Kakoune configuration for testing guile-lsp.
+# Loaded through KAKOUNE_CONFIG_DIR=<repo>/editor/kak by scripts/kak.sh (Kakoune
+# ignores XDG_CONFIG_HOME), so it never
+# touches ~/.config/kak. Kakoune falls back to its bundled autoload (filetype
+# detection etc.) because this directory has no autoload/ of its own.
+
+evaluate-commands %sh{kak-lsp --kakoune -s "$kak_session"}
+set-option global lsp_cmd "kak-lsp -s %val{session} -vvvv --log /tmp/guile-lsp-kak-lsp.log"
+# Mirror the LSP traffic into the *debug* buffer, which scripts/e2e-kak.sh reads.
+set-option global lsp_debug true
+
+hook global BufSetOption filetype=scheme %{
+    # `guile-lsp` resolves through PATH, which scripts/kak.sh prepends with
+    # the build directory (or the directory of $GUILE_LSP_BIN).
+    set-option buffer lsp_servers %{
+        [guile-lsp]
+        roots = [".git", "Cargo.toml"]
+        command = "guile-lsp"
+    }
+}
+
+hook global WinSetOption filetype=scheme %{
+    lsp-enable-window
+    lsp-auto-hover-enable
+    map window user e -docstring 'next error' ': lsp-find-error<ret>'
+    map window user o -docstring 'symbols' ': lsp-document-symbol<ret>'
+    map window user s -docstring 'expand selection' ': lsp-selection-range<ret>'
+}

@@ -1,0 +1,8 @@
+# `guile-lsp` resolves through PATH, which scripts/hx.sh prepends with the
+# build directory (or the directory of $GUILE_LSP_BIN).
+[language-server.guile-lsp]
+command = "guile-lsp"
+
+[[language]]
+name = "scheme"
+language-servers = ["guile-lsp"]
